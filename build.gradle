@@ -31,18 +31,17 @@ minecraft {
 }
 //Defines basic patterns for pulling various dependencies.
 repositories {
-    maven {
-        url "http://dvs1.progwml6.com/files/maven"
-    }
+    maven { url "http://dvs1.progwml6.com/files/maven" } // for JEI
+    maven { url "http://tehnut.info/maven/" } // for guideapi
 }
 
 dependencies {
-  // compile against the JEI API
+ 
   deobfCompile "mezz.jei:jei_${mc_version}:${jei_version}:api"
   // at runtime, use the full JEI jar
   runtime "mezz.jei:jei_${mc_version}:${jei_version}"
-
-  //compile files("lib/Baubles-${mc_version}-${baubles_version}.jar")
+  
+  deobfCompile "info.amerifrance.guideapi:Guide-API:${mc_version}-${guideapi_version}"
 }
 
 processResources {
