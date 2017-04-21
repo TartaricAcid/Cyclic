@@ -23,7 +23,7 @@ import net.minecraft.world.World;
 public class UtilEntity {
   private static final double ENTITY_PULL_DIST = 0.4;//closer than this and nothing happens
   private static final double ENTITY_PULL_SPEED_CUTOFF = 3;//closer than this and it slows down
-  private final static float ITEMSPEEDFAR = 0.9F;
+  public final static float ITEMSPEEDFAR = 0.9F;
   private final static float ITEMSPEEDCLOSE = 0.2F;
   public static void teleportWallSafe(EntityLivingBase player, World world, BlockPos coords) {
     player.setPositionAndUpdate(coords.getX(), coords.getY(), coords.getZ());
@@ -215,11 +215,6 @@ public class UtilEntity {
   public static void speedupEntity(EntityLivingBase entity, float factor) {
     entity.motionX += net.minecraft.util.math.MathHelper.sin(-entity.rotationYaw * 0.017453292F) * factor;
     entity.motionZ += net.minecraft.util.math.MathHelper.cos(entity.rotationYaw * 0.017453292F) * factor;
-  }
-  public static int moveEntityLivingNonplayers(World world, double x, double y, double z, int ITEM_HRADIUS, int ITEM_VRADIUS, boolean towardsPos) {
-    AxisAlignedBB range = UtilEntity.makeBoundingBox(x, y, z, ITEM_HRADIUS, ITEM_VRADIUS);
-    List<EntityLivingBase> nonPlayer = getLivingHostile(world, range);
-    return pullEntityList(x, y, z, towardsPos, nonPlayer);
   }
   public static List<EntityLivingBase> getLivingHostile(World world, AxisAlignedBB range) {
     List<EntityLivingBase> all = world.getEntitiesWithinAABB(EntityLivingBase.class, range);

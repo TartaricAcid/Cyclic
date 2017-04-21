@@ -1,23 +1,27 @@
 package com.lothrazar.cyclicmagic.block.tileentity;
+import java.util.List;
+import com.lothrazar.cyclicmagic.util.Const;
 import com.lothrazar.cyclicmagic.util.UtilEntity;
 import com.lothrazar.cyclicmagic.util.UtilParticle;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.EnumCreatureType;
+import net.minecraft.init.MobEffects;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.math.AxisAlignedBB;
 
 public class TileEntityMagnetAnti extends TileEntityBaseMachine implements ITickable {
   private int timer;
   private static final String NBT_TIMER = "Timer";
-  public final static int TIMER_FULL = 20;
+  public final static int TIMER_FULL = 10;
   public final static int ITEM_VRADIUS = 3;
   public final static int ITEM_HRADIUS = 32;
+  public final static float SPEED = 1.437F;
+  
   public TileEntityMagnetAnti() {
     this.timer = TIMER_FULL;
-  }
-  @Override
-  public ITextComponent getDisplayName() {
-    return null;
   }
   @Override
   public void readFromNBT(NBTTagCompound tagCompound) {
@@ -42,10 +46,18 @@ public class TileEntityMagnetAnti extends TileEntityBaseMachine implements ITick
     }
     // center of the block
     double x = this.getPos().getX() + 0.5;
-    double y = this.getPos().getY() + 0.7;
+    double y = this.getPos().getY() - 0.5;
     double z = this.getPos().getZ() + 0.5;
     if (trigger) {
-      UtilEntity.moveEntityLivingNonplayers(this.getWorld(), x, y, z, ITEM_HRADIUS, ITEM_VRADIUS, false);
+      AxisAlignedBB range = UtilEntity.makeBoundingBox(x, y, z, ITEM_HRADIUS, ITEM_VRADIUS);
+      List<EntityLivingBase> nonPlayer = UtilEntity.getLivingHostile(this.getWorld(), range);
+      UtilEntity.pullEntityList(x, y, z, false, nonPlayer,SPEED,SPEED);
+      for(EntityLivingBase living : nonPlayer){
+        if(living.isCreatureType(EnumCreatureType.MONSTER, false)){
+          living.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS,10*Const.TICKS_PER_SEC, 1));
+          living.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS,10*Const.TICKS_PER_SEC, 4));
+        }
+      }
       timer = TIMER_FULL;//harvest worked!
       spawnParticles();
     }
